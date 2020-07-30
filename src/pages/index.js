@@ -1,50 +1,66 @@
 import React from "react"
 import { Link } from "gatsby"
-import Layout from "../components/layout"
+import BaseLayout from "../components/base-layout"
 import styled from "styled-components"
 
 export default function Home() {
   return (
-    <Layout>
-      <StyledPageListItem to="/" title="Casa" />
+    <BaseLayout>
       <PageList pages={pages} />
-    </Layout>
+    </BaseLayout>
   )
 }
 
 const pages = [
-  { to: "scrolling-logos", title: "Scrolling Logos" },
+  { to: "scrolling-logos", title: "Scrolling logos" },
   { to: "showcase", title: "Showcase" },
+  { to: "large-img", title: "Large image" },
+  { to: "opening-menu", title: "Opening menu on hover" },
+  { to: "product-list", title: "Product list" },
+  { to: "random-proverb", title: "Random proverb" },
+  { to: "sliding-temp-converter", title: "Sliding temperature converter" },
 ]
 
-function PageListItem(props) {
-  return (
-    <li id={props.to}>
-      <Link to={props.to}>{props.title}</Link>
-    </li>
-  )
-}
+/* const PageListItem = styled(props => (
+ *   <li key={props.to} className={props.className}>
+ *   <Link to={props.to}>{props.title}</Link>
+ *   </li>
+ * )) */
 
-const StyledPageListItem = styled(PageListItem)`
-  color: aqua;
-  font-size: 40px;
+const PageListItem = styled(props => (
+  <li key={props.to} className={props.className}>
+    <Link to={props.to}>{props.title}</Link>
+  </li>
+))`
+  a {
+    color: inherit;
+    font-size: 1.4em;
+    text-decoration: none;
+    line-height: 1.4em;
+    display: block;
+    margin-bottom: 0.4em;
+  }
+  a:hover,
+  a:focus {
+    color: cornflowerblue;
+
+    text-decoration: solid underline 2px;
+  }
 `
 
+/* const StyledPageListItem = styled(PageListItem)`
+ *   color: aqua;
+ *   font-size: 40px;
+ * ` */
+
 const PageList = styled(props => (
-  <ul>
+  <ul className={props.className}>
     {props.pages.map(page => (
-      <StyledPageListItem {...page} />
+      <PageListItem {...page} />
     ))}
   </ul>
 ))`
-  font-size: 80px;
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
 `
-
-/* function PageList(props) {
- *   const pages = props.pages.map(page => (
- *     <li id={page.to}>
- *       <Link to={page.to}>{page.title}</Link>
- *     </li>
- *   ))
- *   return <ul>{pages}</ul>
- * } */

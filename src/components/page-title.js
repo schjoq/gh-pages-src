@@ -1,8 +1,8 @@
 import React from "react"
 import styled from "styled-components"
 
-export default function Header(props) {
-  return <Wrapper>{props.headerText}</Wrapper>
+export default function PageTitle(props) {
+  return <Wrapper>{props.titleText}</Wrapper>
 }
 
 const Wrapper = styled.h1`

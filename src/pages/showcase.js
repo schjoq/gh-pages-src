@@ -1,12 +1,10 @@
 import React from "react"
-import { Link } from "gatsby"
 import styled from "styled-components"
 import Layout from "../components/layout"
-import Header from "../components/header"
 
-export default function Showcase() {
+export default function ShowcasePage() {
   return (
-    <Layout pageTitle="Showcase">
+    <Layout titleText="Showcase">
       <Show cases={cases} />
     </Layout>
   )
@@ -20,15 +18,17 @@ const cases = [
   { src: "/showcase/www.target.com.jpg", alt: "Target" },
 ]
 
-const Case = props => <Img src={props.src} alt={props.alt} />
+const Case = props => <Img {...props} />
 
 const Img = styled.img`
   width: 360px;
 `
 
 function Wrapper(props) {
-  const cases = props.cases.map(c => <Case src={c.src} alt={c.alt} />)
-  return <div>{cases}</div>
+  const cases = props.cases.map(c => (
+    <Case key={c.src} src={c.src} alt={c.alt} />
+  ))
+  return <div className={props.className}>{cases}</div>
 }
 
 const Show = styled(Wrapper)`
