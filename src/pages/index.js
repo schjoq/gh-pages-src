@@ -19,16 +19,11 @@ const pages = [
   { to: "product-list", title: "Product list" },
   { to: "random-proverb", title: "Random proverb" },
   { to: "sliding-temp-converter", title: "Sliding temperature converter" },
+  { to: "comparing-2-img", title: "Comparing 2 images" },
 ]
 
-/* const PageListItem = styled(props => (
- *   <li key={props.to} className={props.className}>
- *   <Link to={props.to}>{props.title}</Link>
- *   </li>
- * )) */
-
 const PageListItem = styled(props => (
-  <li key={props.to} className={props.className}>
+  <li className={props.className}>
     <Link to={props.to}>{props.title}</Link>
   </li>
 ))`
@@ -43,24 +38,19 @@ const PageListItem = styled(props => (
   a:hover,
   a:focus {
     color: cornflowerblue;
-
     text-decoration: solid underline 2px;
   }
 `
 
-/* const StyledPageListItem = styled(PageListItem)`
- *   color: aqua;
- *   font-size: 40px;
- * ` */
-
 const PageList = styled(props => (
   <ul className={props.className}>
     {props.pages.map(page => (
-      <PageListItem {...page} />
+      <PageListItem key={props.to} {...page} />
     ))}
   </ul>
 ))`
   padding: 0;
   margin: 0;
   list-style-type: none;
+  max-width: max-content;
 `

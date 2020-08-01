@@ -6,7 +6,7 @@ export default function OpeningMenuPage() {
   return (
     <Layout titleText="Opening Menu on Hover">
       <p>How to align the icons nicely? And make the menu open and close?</p>
-      <OpeningMenuList menuTitle="Download" items={items} />
+      <OpeningMenuList menuTitle="Get" items={items} />
     </Layout>
   )
 }

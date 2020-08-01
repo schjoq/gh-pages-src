@@ -3,15 +3,17 @@ import { Link } from "gatsby"
 import styled from "styled-components"
 import "normalize.css"
 import { Helmet } from "react-helmet"
+import GitHubButton from "../components/github-button"
 
 export default function BaseLayout(props) {
   return (
-    <Wrapper>
+    <Wrapper {...props}>
       <Helmet>
         <title>{props.titleText || "Demos"}</title>
       </Helmet>
       <Header>
         <StyledLink to="/">Home</StyledLink>
+        <GitHubButton />
       </Header>
       <main>{props.children}</main>
     </Wrapper>
@@ -20,6 +22,7 @@ export default function BaseLayout(props) {
 
 const Header = styled.header`
   margin-bottom: 1.6em;
+  position: relative;
 `
 
 const Wrapper = styled.div`
@@ -27,11 +30,32 @@ const Wrapper = styled.div`
   font-size: 17px;
   color: #333;
   margin: 0 auto;
-  max-width: 960px;
+  max-width: 760px;
 
   p {
     margin: 0 0 1em;
     line-height: 1.6em;
+  }
+
+  main a {
+    color: inherit;
+  }
+
+  main a:hover {
+    color: cornflowerblue;
+  }
+
+  a:hover {
+    text-decoration-line: underline;
+  }
+
+  header a[href="/"]:hover {
+    text-decoration: none;
+  }
+
+  a:focus {
+    outline: 3px solid cornflowerblue;
+    outline-offset: 2px;
   }
 `
 

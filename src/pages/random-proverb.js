@@ -5,7 +5,15 @@ import Layout from "../components/layout"
 export default function RandomProverbPage() {
   return (
     <Layout titleText="Random proverb">
-      <p>Add transition. Style the button.</p>
+      <ul>
+        TODO
+        <li>Add transition</li>
+        <li>Polish the button</li>
+      </ul>
+      <p>
+        Inspired by something similar for Latin proverbs on top of{" "}
+        <a href="http://www.wheelockslatin.com/">Wheelock's Latin.com</a>.
+      </p>
       <RandomProverb />
     </Layout>
   )
@@ -32,10 +40,10 @@ const proverbs = [
 ]
 
 function getRandomProverb() {
-  return proverbs[Math.round(Math.random() * proverbs.length)]
+  return proverbs[Math.floor(Math.random() * proverbs.length)]
 }
 
-class RandomProverb extends React.Component {
+class RandomProverbWrapper extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -52,13 +60,46 @@ class RandomProverb extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className={this.props.className}>
         <Proverb {...this.state.proverb} />
         <Button onClick={this.handleClick} />
       </div>
     )
   }
 }
+
+const RandomProverb = styled(RandomProverbWrapper)`
+  padding: 1em 0 1em 2ch;
+
+  blockquote {
+    margin: 3em 0 4em;
+    max-width: 50ch;
+    min-height: 6em;
+  }
+
+  footer {
+    font-style: italic;
+    text-align: right;
+    margin-right: 6ch;
+  }
+
+  footer::before {
+    content: "-";
+  }
+
+  button {
+    padding: 8px 8px;
+    border: 1px solid;
+    border-radius: 2px;
+    color: #666;
+    cursor: pointer;
+    background-color: #fff;
+  }
+
+  button:hover {
+    background-color: #eee;
+  }
+`
 
 const Proverb = ({ text, author }) => (
   <blockquote>
