@@ -37,6 +37,10 @@ const Wrapper = styled.div`
     line-height: 1.6em;
   }
 
+  main > p {
+    margin-left: 18ch;
+  }
+
   main a {
     color: inherit;
   }
@@ -62,7 +66,7 @@ const Wrapper = styled.div`
 const StyledLink = styled(props => <Link {...props} />)`
   text-decoration: none;
   color: inherit;
-  font-size: 1.2em;
+  font-size: 1em;
   display: inline-block;
   font-weight: bold;
   line-height: 2em;
