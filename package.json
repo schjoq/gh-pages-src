@@ -15,8 +15,8 @@
     "deploy": "gatsby build && gh-pages -b master -d public -r https://github.com/schjoq/schjoq.github.io"
   },
   "dependencies": {
-    "babel-plugin-styled-components": "^1.10.7",
-    "gatsby": "^2.24.12",
+    "babel-plugin-styled-components": "^1.11.1",
+    "gatsby": "^2.24.23",
     "gatsby-plugin-react-helmet": "^3.3.10",
     "gatsby-plugin-styled-components": "^3.3.10",
     "normalize.css": "^8.0.1",

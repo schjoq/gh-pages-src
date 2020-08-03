@@ -17,7 +17,22 @@ export default function SlidingTempConverterPage() {
         </a>
         .
       </p>
-      <SlidingTempConverter />
+      <Marks
+        hasSmallMarks
+        markFrom="right"
+        sliderSmallestMark="34.6"
+        sliderRangeMin="34.6"
+        sliderRangeMax="36.2"
+        sliderRangeStep=".1"
+      />
+      <Marks
+        hasSmallMarks="null"
+        markFrom="left"
+        sliderSmallestMark="35"
+        sliderRangeMin="35"
+        sliderRangeMax="42"
+        sliderRangeStep="5"
+      />
     </Layout>
   )
 }
@@ -37,29 +52,38 @@ function getMarkLength(markType) {
 }
 
 const Mark = styled(function (props) {
-  return (
-    <div className={props.className}>
-      {/* props.markType === "main-mark" ? <span>{props.markText}</span> : null */}
-      <span>{props.markText}</span>
-      <div></div>
-    </div>
-  )
+  return <div className={props.className}></div>
 })`
-  div {
-    width: ${props => getMarkLength(props.markType)};
-    height: 50%;
-    float: right;
-    outline: 1px solid red;
+  border-top: 1px solid black;
+  width: ${props => props.markLength};
+  position: absolute;
+  top: ${props => props.position};
+  ${props => props.markFrom}: 0;
+
+  &::before {
+    content: "${props => props.markText}";
+    width: 5ch;
+    position: absolute;
+    top: -0.5em;
+    ${props => props.markFrom}: 100%;
+    text-align: center;
   }
 `
 
 // There're always 10 smaller marks between main marks
 const numberOfSmallMarksBetweenMark = 10
-function roundTo1DigitString(temperature) {
-  return parseFloat(temperature).toFixed(1)
+function roundToDigitStringN(number, n) {
+  return parseFloat(number).toFixed(n)
 }
-function roundTo1DigitNumber(temperature) {
-  return Number(roundTo1DigitString(temperature))
+function roundToDigitNumberN(number, n) {
+  return Number(roundToDigitStringN(number, n))
+}
+
+function roundToDigitString1(number) {
+  return roundToDigitStringN(number, 1)
+}
+function roundToDigitNumber1(number) {
+  return roundToDigitNumberN(number, 1)
 }
 
 function MarksWrapper(props) {
@@ -68,12 +92,11 @@ function MarksWrapper(props) {
     sliderRangeMin,
     sliderRangeMax,
     sliderRangeStep,
-    sliderHeight,
   } = {
     ...Object.fromEntries(
       Object.entries({ ...props }).map(([key, val]) => [
         key,
-        roundTo1DigitNumber(val),
+        roundToDigitNumber1(val),
       ])
     ),
   }
@@ -87,7 +110,7 @@ function MarksWrapper(props) {
     for (
       let i = sliderSmallestMark;
       i <= sliderRangeMax;
-      i += sliderRangeStep
+      i = roundToDigitNumber1(i + sliderRangeStep)
     ) {
       points.push(i)
     }
@@ -100,134 +123,102 @@ function MarksWrapper(props) {
     sliderRangeMax
   )
 
+  // Medium mark points are 1/2 step away from main mark points
   const mediumMarkPoints = [
     sliderSmallestMark - sliderRangeStep / 2,
     ...mainMarkPoints.map(point => point + sliderRangeStep / 2),
-  ]
-  // Test
-  console.log("Main mark points: ", mainMarkPoints)
-  console.log("Medium mark points: ", mediumMarkPoints)
+  ].filter(point => point >= sliderRangeMin && point <= sliderRangeMax)
 
-  function getMarkForPoint(point) {
-    const temperatureString = roundTo1DigitString(point)
-    const temperatureNumber = roundTo1DigitNumber(point)
-    let markType
-    if (mainMarkPoints.includes(temperatureNumber)) markType = "main-mark"
-    else if (mediumMarkPoints.includes(temperatureNumber))
-      markType = "medium-mark"
-    else markType = "small-mark"
+  function getPositionForPointAsPercentageString(
+    point,
+    sliderRangeMin,
+    sliderRangeMax
+  ) {
+    return (
+      roundToDigitString1(
+        ((sliderRangeMax - point) / (sliderRangeMax - sliderRangeMin)) * 100
+      ) + "%"
+    )
+  }
+
+  const markFrom = props.markFrom
+  const markLengthes = {
+    "main-mark": "40px",
+    "medium-mark": "30px",
+    "small-makr": "20px",
+  }
+
+  function makeMarkForPoint(
+    point,
+    numberOfDigitsAfterDecimalPoint,
+    markType,
+    markFrom,
+    sliderRangeMin,
+    sliderRangeMax
+  ) {
     return (
       <Mark
-        key={point}
-        className={markType}
-        markType={markType}
-        markText={temperatureString}
+        markFrom={markFrom}
+        markText={roundToDigitStringN(point, numberOfDigitsAfterDecimalPoint)}
+        position={getPositionForPointAsPercentageString(
+          point,
+          sliderRangeMin,
+          sliderRangeMax
+        )}
+        markLength={markLengthes[markType]}
       />
     )
   }
 
-  console.log(roundTo1DigitNumber(sliderRangeMin))
-  let marks = []
-  for (
-    let point = roundTo1DigitNumber(sliderRangeMax);
-    roundTo1DigitNumber(point) >= roundTo1DigitNumber(sliderRangeMin);
-    point -= sliderRangeStep / numberOfSmallMarksBetweenMark
-  ) {
-    /*     console.log(point, roundTo1DigitNumber(point), roundTo1DigitString(point)) */
-    marks.push(getMarkForPoint(point))
-  }
+  /* let marks = []
+   * for (
+   *   let point = roundToDigitNumber1(sliderRangeMax);
+   *   roundToDigitNumber1(point) >= roundToDigitNumber1(sliderRangeMin);
+   *   point -= sliderRangeStep / numberOfSmallMarksBetweenMark
+   * ) {
+   *   marks.push(getMarkForPoint(point))
+   * }
+   * return <div className={props.className}>{marks}</div> */
+
+  const mainMarks = mainMarkPoints.map(point =>
+    makeMarkForPoint(
+      point,
+      2,
+      "main-mark",
+      markFrom,
+      sliderRangeMin,
+      sliderRangeMax
+    )
+  )
+  const mediumMarks = mediumMarkPoints.map(point =>
+    makeMarkForPoint(
+      point,
+      2,
+      "medium-mark",
+      markFrom,
+      sliderRangeMin,
+      sliderRangeMax
+    )
+  )
   return (
     <div className={props.className}>
-      <table>
-        <tbody>
-          <tr>
-            <td>Max</td>
-            <td>{sliderRangeMax}</td>
-          </tr>
-          <tr>
-            <td>Min</td>
-            <td>{sliderRangeMin}</td>
-          </tr>
-          <tr>
-            <td>Smallest mark</td>
-            <td>{sliderSmallestMark}</td>
-          </tr>
-          <tr>
-            <td>Step</td>
-            <td>{sliderRangeStep}</td>
-          </tr>
-          <tr>
-            <td>Slider height</td>
-            <td>{sliderHeight}</td>
-          </tr>
-        </tbody>
-      </table>
-      {marks}
+      {props.hasSmallMarks ? <p>has small marks</p> : null}
+      {mediumMarks}
     </div>
   )
 }
 
 const Marks = styled(MarksWrapper)`
-  /*   overflow: hidden; */
-  display: flex;
-  flex-direction: column;
-  outline: 1px solid orange;
-  --slider-height: ${props => props.sliderHeight};
-  --slider-range-max: ${props => props.sliderRangeMax};
-  --slider-range-min: ${props => props.sliderRangeMin};
-  --slider-range-step: ${props => props.sliderRangeStep};
-  --slider-mark-height: calc(
-    ${props => props.sliderHeight} /
-      (var(--slider-range-max) - var(--slider-range-min)) /
-      ${numberOfSmallMarksBetweenMark}
-  );
-  height: var(--slider-height);
-
-  table {
-    position: absolute;
-    left: 8vw;
-  }
-
-  ${Mark} {
-    height: var(--slider-mark-height);
-    width: 200px;
-    position: relative;
-    outline: 1px solid blue;
-    flex: 0 0 auto;
-  }
-
-  ${Mark}:nth-child(2) {
-    background-color: pink;
-    margin-top: calc(
-      0 * -1 *
-        (
-          (var(--drawn-slider-range-max) - var(--slider-range-max)) *
-            var(--slider-height) /
-            (var(--slider-range-max) - var(--slider-range-min))
-        )
-    );
-  }
-
-  ${Mark} > div {
-    border-bottom: 3px solid;
-  }
-
-  ${Mark}.small-mark > div {
-    border-bottom: ${props => (props.hasSmallMarks ? "3px" : "0px")} solid;
-  }
-
-  ${Mark} span {
-    font-size: calc(var(--slider-mark-height) * 0.7);
-    position: absolute;
-    top: calc(50% - 1em / 2);
-    left: 0;
-    width: 4ch;
-    text-align: right;
-  }
+  width: 100px;
+  height: 300px;
+  margin: 100px 8px 0;
+  position: relative;
+  outline: 2px solid red;
+  float: left;
 `
 
 const TempDisplay = styled(props => (
-  <span className={props.className}>{roundTo1DigitString(props.value)}</span>
+  <span className={props.className}>{roundToDigitString1(props.value)}</span>
 ))`
   display: inline-block;
   font-size: 3em;
@@ -280,7 +271,6 @@ class SlidingTempConverterWrapper extends React.Component {
           value={toFahrenheit(value)}
         />
         <Marks
-          sliderHeight="840px"
           sliderSmallestMark="35"
           sliderRangeMin="35"
           sliderRangeMax="42"
