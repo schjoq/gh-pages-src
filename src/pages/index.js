@@ -23,7 +23,7 @@ const pages = [
 ]
 
 const PageListItem = styled(props => (
-  <li className={props.className}>
+  <li key={props.to} className={props.className}>
     <Link to={props.to}>{props.title}</Link>
   </li>
 ))`
@@ -45,7 +45,7 @@ const PageListItem = styled(props => (
 const PageList = styled(props => (
   <ul className={props.className}>
     {props.pages.map(page => (
-      <PageListItem key={props.to} {...page} />
+      <PageListItem to={props.to} {...page} />
     ))}
   </ul>
 ))`

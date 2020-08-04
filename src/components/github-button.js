@@ -21,7 +21,7 @@ const Wrapper = styled(props => (
 ))`
   position: absolute;
   top: -13px;
-  right: 10%;
+  right: 0;
   transition: 300ms top ease-out;
 
   &:hover {

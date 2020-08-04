@@ -5,11 +5,13 @@ import Layout from "../components/layout"
 export default function ProductListPage() {
   return (
     <Layout titleText="Product list">
-      <ul>
-        Todo
-        <li>Remove the outlines</li>
-        <li>Add dots after "Price"</li>
-      </ul>
+      <p>
+        Trying to recreate the clean layout on{" "}
+        <a href="https://www.labourandwait.co.uk/">
+          Labour and Wait's online shop
+        </a>
+        .
+      </p>
       <ProductList productItems={productItems} />
     </Layout>
   )
@@ -24,15 +26,13 @@ const ProductList = styled(ProductListWrapper)`
   padding: 0;
   max-width: 800px;
   letter-spacing: 3px;
-  margin: 0px 0 25px;
-  outline: 1px dashed maroon;
+  margin: 4em 0;
   --gutter: 5.5%;
 
   li {
     display: flex;
     flex-direction: column;
     width: calc((100% - var(--gutter) * 2) / 3);
-    outline: 1px solid sienna;
     margin-bottom: 28px;
   }
 
@@ -75,13 +75,26 @@ const ProductList = styled(ProductListWrapper)`
     font-size: 11px;
     color: red;
     text-align: right;
+    display: flex;
   }
 
   .price::before {
     content: "Price";
-    position: absolute;
-    left: 0;
     color: initial;
+    display: block;
+    order: -2;
+  }
+
+  .price::after {
+    content: "";
+    display: block;
+    flex-grow: 1;
+    order: -1;
+    background-image: url(${imgDir + "dot.svg"});
+    background-size: 7px 3px;
+    background-repeat: space no-repeat;
+    background-position: right bottom 4px;
+    margin: 0 4px;
   }
 
   .add {
