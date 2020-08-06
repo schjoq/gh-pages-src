@@ -12,11 +12,7 @@ export default function Comparing2ImagPage() {
     alt: "Print of woodblock Martyrdom of Saint Sebastian",
   }
   return (
-    <Layout titleText="Comparing 2 images">
-      <ul>
-        TODO
-        <li>Use styled.foo.attrs</li>
-      </ul>{" "}
+    <Layout titleText="Comparing 2 Images">
       <Comparing2Imag leftImg={leftImg} rightImg={rightImg}>
         Left: woodblcok <cite>Martyrdom of Saint Sebastian</cite> (reversed
         horizontally); right: print of same woodblcok.

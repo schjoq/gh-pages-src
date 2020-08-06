@@ -4,7 +4,7 @@ import Layout from "../components/layout"
 
 export default function SlidingTempConverterPage() {
   return (
-    <Layout titleText="Sliding temperature converter">
+    <Layout titleText="Sliding Temperature Converter">
       <ul>
         Todo
         <li>How to implement marks</li>
@@ -142,11 +142,6 @@ function MarksWrapper(props) {
   }
 
   const markFrom = props.markFrom
-  const markLengthes = {
-    "main-mark": "40px",
-    "medium-mark": "30px",
-    "small-makr": "20px",
-  }
 
   function makeMarkForPoint(
     point,
@@ -156,6 +151,11 @@ function MarksWrapper(props) {
     sliderRangeMin,
     sliderRangeMax
   ) {
+    const markLengthes = {
+      "main-mark": "40px",
+      "medium-mark": "30px",
+      "small-makr": "20px",
+    }
     return (
       <Mark
         markFrom={markFrom}
@@ -169,16 +169,6 @@ function MarksWrapper(props) {
       />
     )
   }
-
-  /* let marks = []
-   * for (
-   *   let point = roundToDigitNumber1(sliderRangeMax);
-   *   roundToDigitNumber1(point) >= roundToDigitNumber1(sliderRangeMin);
-   *   point -= sliderRangeStep / numberOfSmallMarksBetweenMark
-   * ) {
-   *   marks.push(getMarkForPoint(point))
-   * }
-   * return <div className={props.className}>{marks}</div> */
 
   const mainMarks = mainMarkPoints.map(point =>
     makeMarkForPoint(

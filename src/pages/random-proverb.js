@@ -4,12 +4,7 @@ import Layout from "../components/layout"
 
 export default function RandomProverbPage() {
   return (
-    <Layout titleText="Random proverb">
-      <ul>
-        TODO
-        <li>Add transition</li>
-        <li>Polish the button</li>
-      </ul>
+    <Layout titleText="Random Proverb">
       <p>
         Inspired by something similar for Latin proverbs on top of{" "}
         <a href="http://www.wheelockslatin.com/">Wheelock's Latin.com</a>.

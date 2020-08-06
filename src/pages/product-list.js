@@ -4,7 +4,7 @@ import Layout from "../components/layout"
 
 export default function ProductListPage() {
   return (
-    <Layout titleText="Product list">
+    <Layout titleText="Product List">
       <p>
         Trying to recreate the clean layout on{" "}
         <a href="https://www.labourandwait.co.uk/">
