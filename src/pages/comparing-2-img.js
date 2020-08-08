@@ -30,14 +30,23 @@ class Comparing2ImagWrapper extends React.Component {
 
   handleChange(e) {
     this.setState({ percentage: e.target.value })
+    document.getElementById("left-img").style.width =
+      this.state.percentage * 300 + "px"
+  }
+
+  componentDidMount() {
+    document.getElementById("left-img").style.width =
+      this.state.percentage * 300 + "px"
   }
 
   render() {
     const percentage = this.state.percentage
     return (
       <figure className={this.props.className}>
-        <img {...this.props.leftImg} />
-        <ImgRight percentage={percentage} {...this.props.rightImg} />
+        <div id="left-img">
+          <img {...this.props.leftImg} />
+        </div>
+        <img {...this.props.rightImg} />
         <input
           value={percentage}
           onChange={this.handleChange}
@@ -62,18 +71,16 @@ const Comparing2Imag = styled(Comparing2ImagWrapper)`
     width: 300px;
   }
 
-  img:nth-child(2) {
+  > div {
+    overflow: hidden;
+  }
+
+  > img {
     position: absolute;
-    left: 0;
+    left: 300px;
   }
 
   figcaption {
     margin-top: 1em;
   }
-`
-
-const ImgRight = styled.img`
-  clip-path: inset(
-    0 0 0 ${props => parseFloat(props.percentage * 100).toFixed(2) + "%"}
-  );
 `
