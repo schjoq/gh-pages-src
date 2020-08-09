@@ -48,7 +48,7 @@ function Wrapper(props) {
 
 const Show = styled(Wrapper)`
   display: flex;
-  height: 300px;
+  height: 420px;
   align-items: center;
   position: absolute;
   left: 2vw;
