@@ -12,13 +12,13 @@ export default function Home() {
 }
 
 const pages = [
+  { to: "sliding-temp-converter", title: "Sliding temperature converter" },
+  { to: "comparing-2-img", title: "Comparing 2 images" },
+  { to: "product-list", title: "Product list" },
+  { to: "random-proverb", title: "Random proverb" },
   { to: "scrolling-logos", title: "Scrolling logos" },
   { to: "showcase", title: "Showcase" },
   { to: "sticky-bg", title: "Sticky Backgrounds" },
-  { to: "product-list", title: "Product list" },
-  { to: "random-proverb", title: "Random proverb" },
-  { to: "sliding-temp-converter", title: "Sliding temperature converter" },
-  { to: "comparing-2-img", title: "Comparing 2 images" },
 ]
 
 const PageListItem = styled(props => (
