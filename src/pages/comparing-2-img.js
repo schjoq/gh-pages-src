@@ -69,7 +69,11 @@ const Comparing2Imag = styled(Comparing2ImagWrapper)`
   &,
   img,
   input {
-    width: 300px;
+    width: 320px;
+  }
+
+  input {
+    height: 40px;
   }
 
   > div {

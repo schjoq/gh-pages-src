@@ -14,7 +14,7 @@ export default function Home() {
 const pages = [
   { to: "scrolling-logos", title: "Scrolling logos" },
   { to: "showcase", title: "Showcase" },
-  { to: "large-img", title: "Large image" },
+  { to: "sticky-bg", title: "Sticky Backgrounds" },
   { to: "product-list", title: "Product list" },
   { to: "random-proverb", title: "Random proverb" },
   { to: "sliding-temp-converter", title: "Sliding temperature converter" },

@@ -11,7 +11,7 @@ export default function SlidingTempConverterPage() {
           the iOS app Sliding Temperature Converter
         </a>
         . Icons by{" "}
-        <a target="_blank" href="https://icons8.com">
+        <a target="_blank" rel="noreferrer" href="https://icons8.com">
           Icons8
         </a>
         .
@@ -140,6 +140,11 @@ function MarksWrapper(props) {
       "medium-mark": "30px",
       "small-mark": "20px",
     }
+    const position = getPositionForPointAsPercentageString(
+      point,
+      sliderRangeMin,
+      sliderRangeMax
+    )
     return (
       <Mark
         markFrom={markFrom}
@@ -148,11 +153,8 @@ function MarksWrapper(props) {
             ? null
             : roundToDigitStringN(point, numberOfDigitsAfterDecimalPoint)
         }
-        position={getPositionForPointAsPercentageString(
-          point,
-          sliderRangeMin,
-          sliderRangeMax
-        )}
+        position={position}
+        key={position}
         markLength={markLengthes[markType]}
       />
     )
@@ -415,8 +417,8 @@ const SlidingTemperatureConverter = styled(SlidingTemperatureConverterWrapper)`
 
   #slider-bar {
     position: absolute;
-    border-top: 2px solid red;
-    width: 100px;
+    border-top: 2px solid #ff0000a3;
+    width: 84px;
     top: 50%;
     left: 50%;
     translate: -50%;
@@ -427,7 +429,7 @@ const SlidingTemperatureConverter = styled(SlidingTemperatureConverterWrapper)`
     top: 50%;
     left: 116px;
     width: 300px;
-
+    height: 120px;
     translate: 0 -50%;
     rotate: -90deg;
     z-index: 1;
