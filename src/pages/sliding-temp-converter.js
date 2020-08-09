@@ -17,38 +17,13 @@ export default function SlidingTempConverterPage() {
         </a>
         .
       </p>
-      <Marks
-        hasSmallMarks
-        markFrom="right"
-        sliderSmallestMark="34.6"
-        sliderRangeMin="34.6"
-        sliderRangeMax="36.2"
-        sliderRangeStep=".1"
-      />
-      <Marks
-        hasSmallMarks="null"
-        markFrom="left"
-        sliderSmallestMark="35"
-        sliderRangeMin="35"
-        sliderRangeMax="42"
-        sliderRangeStep="5"
-      />
+      <SlidingTemperatureConverter />
     </Layout>
   )
 }
 
 function toFahrenheit(celsius) {
   return (celsius * 9) / 5 + 32
-}
-
-function getMarkLength(markType) {
-  if (markType === "main-mark") {
-    return "60%"
-  } else if (markType === "medium-mark") {
-    return "40%"
-  } else if (markType === "small-mark") {
-    return "20%"
-  }
 }
 
 const Mark = styled(function (props) {
@@ -70,8 +45,6 @@ const Mark = styled(function (props) {
   }
 `
 
-// There're always 10 smaller marks between main marks
-const numberOfSmallMarksBetweenMark = 10
 function roundToDigitStringN(number, n) {
   return parseFloat(number).toFixed(n)
 }
@@ -84,6 +57,18 @@ function roundToDigitString1(number) {
 }
 function roundToDigitNumber1(number) {
   return roundToDigitNumberN(number, 1)
+}
+
+function getPositionForPointAsPercentageString(
+  point,
+  sliderRangeMin,
+  sliderRangeMax
+) {
+  return (
+    roundToDigitString1(
+      ((sliderRangeMax - point) / (sliderRangeMax - sliderRangeMin)) * 100
+    ) + "%"
+  )
 }
 
 function MarksWrapper(props) {
@@ -129,17 +114,17 @@ function MarksWrapper(props) {
     ...mainMarkPoints.map(point => point + sliderRangeStep / 2),
   ].filter(point => point >= sliderRangeMin && point <= sliderRangeMax)
 
-  function getPositionForPointAsPercentageString(
-    point,
-    sliderRangeMin,
-    sliderRangeMax
-  ) {
-    return (
-      roundToDigitString1(
-        ((sliderRangeMax - point) / (sliderRangeMax - sliderRangeMin)) * 100
-      ) + "%"
-    )
-  }
+  // Small mark points are 1-4 or 6-9 of 1/10 steps away from main mark points
+  const smallMarkPoints = [
+    [1, 2, 3, 4, 6, 7, 8, 9].map(
+      x => sliderSmallestMark - (sliderRangeStep / 10) * x
+    ),
+    ...mainMarkPoints.map(point =>
+      [1, 2, 3, 4, 6, 7, 8, 9].map(x => point + (sliderRangeStep / 10) * x)
+    ),
+  ]
+    .flat()
+    .filter(point => point >= sliderRangeMin && point <= sliderRangeMax)
 
   const markFrom = props.markFrom
 
@@ -154,12 +139,16 @@ function MarksWrapper(props) {
     const markLengthes = {
       "main-mark": "40px",
       "medium-mark": "30px",
-      "small-makr": "20px",
+      "small-mark": "20px",
     }
     return (
       <Mark
         markFrom={markFrom}
-        markText={roundToDigitStringN(point, numberOfDigitsAfterDecimalPoint)}
+        markText={
+          numberOfDigitsAfterDecimalPoint === null
+            ? null
+            : roundToDigitStringN(point, numberOfDigitsAfterDecimalPoint)
+        }
         position={getPositionForPointAsPercentageString(
           point,
           sliderRangeMin,
@@ -173,125 +162,262 @@ function MarksWrapper(props) {
   const mainMarks = mainMarkPoints.map(point =>
     makeMarkForPoint(
       point,
-      2,
+      0,
       "main-mark",
       markFrom,
       sliderRangeMin,
       sliderRangeMax
     )
   )
+  // Medium marks always exist
   const mediumMarks = mediumMarkPoints.map(point =>
     makeMarkForPoint(
       point,
-      2,
+      null,
       "medium-mark",
       markFrom,
       sliderRangeMin,
       sliderRangeMax
     )
   )
+  // Small marks may and may not exist
+  const smallMarks =
+    props.hasSmallMarks === "true"
+      ? smallMarkPoints.map(point =>
+          makeMarkForPoint(
+            point,
+            null,
+            "small-mark",
+            markFrom,
+            sliderRangeMin,
+            sliderRangeMax
+          )
+        )
+      : null
+
   return (
     <div className={props.className}>
-      {props.hasSmallMarks ? <p>has small marks</p> : null}
+      {mainMarks}
       {mediumMarks}
+      {smallMarks}
     </div>
   )
 }
 
 const Marks = styled(MarksWrapper)`
-  width: 100px;
+  width: 112px;
   height: 300px;
-  margin: 100px 8px 0;
   position: relative;
-  outline: 2px solid red;
-  float: left;
+  margin: 0 2px;
 `
 
-const TempDisplay = styled(props => (
+const TemperatureResult = styled(props => (
   <span className={props.className}>{roundToDigitString1(props.value)}</span>
 ))`
   display: inline-block;
   font-size: 3em;
-  width: 4.5ch;
+  width: 150px;
+  text-align: center;
 `
 
-class TempSliderWrapper extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { step: "0.1", min: "35", max: "42" }
-  }
+const TemperatureSliderWrapper = props => (
+  <input
+    className={props.className}
+    onChange={props.onChange}
+    type="range"
+    step="0.1"
+    min={props.sliderRangeMin}
+    max={props.sliderRangeMax}
+    value={props.value}
+  />
+)
 
-  render() {
-    return (
-      <div className={this.props.className}>
-        <input onChange={this.props.onChange} type="range" {...this.state} />
-      </div>
-    )
-  }
-}
+const TemperatureSlider = styled(TemperatureSliderWrapper)``
 
-const TempSlider = styled(TempSliderWrapper)`
-  width: 300px;
-  height: 20px;
-  outline: 1px solid blue;
-  input {
-    outline: 3px solid red;
-  }
-`
-
-class SlidingTempConverterWrapper extends React.Component {
+class SlidingTemperatureConverterWrapper extends React.Component {
   constructor(props) {
     super(props)
     this.handleChange = this.handleChange.bind(this)
-    this.state = { value: "25" }
+    this.handleSettingChange = this.handleSettingChange.bind(this)
+    this.settings = {
+      human: {
+        celsius: {
+          hasSmallMarks: "false",
+          markFrom: "right",
+          sliderSmallestMark: "35",
+          sliderRangeMin: "35",
+          sliderRangeMax: "42",
+          sliderRangeStep: "1",
+        },
+        fahrenheit: {
+          hasSmallMarks: "false",
+          markFrom: "left",
+          sliderSmallestMark: "95",
+          sliderRangeStep: "1",
+        },
+      },
+      weather: {
+        celsius: {
+          hasSmallMarks: "false",
+          markFrom: "right",
+          sliderSmallestMark: "-30",
+          sliderRangeMin: "-36",
+          sliderRangeMax: "50",
+          sliderRangeStep: "10",
+        },
+        fahrenheit: {
+          hasSmallMarks: "false",
+          markFrom: "left",
+          sliderSmallestMark: "-30",
+          sliderRangeStep: "20",
+        },
+      },
+      oven: {
+        celsius: {
+          hasSmallMarks: "true",
+          markFrom: "right",
+          sliderSmallestMark: "0",
+          sliderRangeMin: "0",
+          sliderRangeMax: "300",
+          sliderRangeStep: "100",
+        },
+        fahrenheit: {
+          hasSmallMarks: "false",
+          markFrom: "left",
+          sliderSmallestMark: "100",
+          sliderRangeStep: "100",
+        },
+      },
+    }
+    this.state = {
+      values: { human: "38", weather: "20", oven: "150" },
+      setting: "oven",
+    }
   }
 
   handleChange(e) {
-    this.setState({ value: e.target.value })
+    const value = e.target.value
+    this.setState({
+      values: { ...this.state.values, [this.state.setting]: value },
+    })
+    document.getElementById(
+      "slider-bar"
+    ).style.top = getPositionForPointAsPercentageString(
+      value,
+      this.settings[this.state.setting].celsius.sliderRangeMin,
+      this.settings[this.state.setting].celsius.sliderRangeMax
+    )
+  }
+
+  handleSettingChange(newSetting) {
+    this.setState({ setting: newSetting })
+    document.getElementById(
+      "slider-bar"
+    ).style.top = getPositionForPointAsPercentageString(
+      this.state.values[newSetting],
+      this.settings[newSetting].celsius.sliderRangeMin,
+      this.settings[newSetting].celsius.sliderRangeMax
+    )
+  }
+
+  componentDidMount() {
+    document.getElementById(
+      "slider-bar"
+    ).style.top = getPositionForPointAsPercentageString(
+      this.state.values[this.state.setting],
+      this.settings[this.state.setting].celsius.sliderRangeMin,
+      this.settings[this.state.setting].celsius.sliderRangeMax
+    )
   }
 
   render() {
-    const value = this.state.value
+    const value = this.state.values[this.state.setting]
     return (
       <div className={this.props.className}>
-        <TempSlider value={value} onChange={this.handleChange} />
-        <TempDisplay className="celsius-result" value={value} />
-        <TempDisplay
-          className="fahrenheit-result"
-          value={toFahrenheit(value)}
-        />
-        <Marks
-          sliderSmallestMark="35"
-          sliderRangeMin="35"
-          sliderRangeMax="42"
-          sliderRangeStep="1"
-        />
+        <div>
+          {" "}
+          <span id="slider-bar"></span>
+          <TemperatureSlider
+            sliderRangeMin={
+              this.settings[this.state.setting].celsius.sliderRangeMin
+            }
+            sliderRangeMax={
+              this.settings[this.state.setting].celsius.sliderRangeMax
+            }
+            value={value}
+            onChange={this.handleChange}
+          />
+          <TemperatureResult className="celsius-result" value={value} />
+          <Marks {...this.settings[this.state.setting].celsius} />
+          <Marks
+            {...this.settings[this.state.setting].fahrenheit}
+            sliderRangeMin={roundToDigitString1(
+              toFahrenheit(
+                this.settings[this.state.setting].celsius.sliderRangeMin
+              )
+            )}
+            sliderRangeMax={roundToDigitString1(
+              toFahrenheit(
+                this.settings[this.state.setting].celsius.sliderRangeMax
+              )
+            )}
+          />
+          <TemperatureResult
+            className="fahrenheit-result"
+            value={toFahrenheit(value)}
+          />
+        </div>
+        <button onClick={() => this.handleSettingChange("human")}>Human</button>
+        <button onClick={() => this.handleSettingChange("weather")}>
+          Weather
+        </button>
+        <button onClick={() => this.handleSettingChange("oven")}>Oven</button>
       </div>
     )
   }
 }
 
-const SlidingTempConverter = styled(SlidingTempConverterWrapper)`
-  padding: 0;
-  position: relative;
+const SlidingTemperatureConverter = styled(SlidingTemperatureConverterWrapper)`
+  > div:first-child {
+    padding: 0;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
 
-  ${TempSlider} input {
+  #slider-bar {
     position: absolute;
-    top: 0;
-    left: 100px;
-    width: 840px;
+    border-top: 2px solid red;
+    width: 100px;
+    top: 50%;
+    left: 50%;
+    translate: -50%;
   }
 
-  ${TempDisplay} {
+  ${TemperatureSlider} {
     position: absolute;
-    top: 0;
+    top: 50%;
+    left: 116px;
+    width: 300px;
+
+    translate: 0 -50%;
+    rotate: -90deg;
+    z-index: 1;
   }
 
-  ${TempDisplay}.celsius-result {
-    left: 400px;
+  ${TemperatureResult}.celsius-result::before {
+    content: "C";
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    color: #aaa;
   }
 
-  ${TempDisplay}.fahrenheit-result {
-    left: 560px;
+  ${TemperatureResult}.fahrenheit-result::before {
+    content: "F";
+    position: absolute;
+    top: 20px;
+    right: 10%;
+    color: #aaa;
   }
 `

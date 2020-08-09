@@ -29,14 +29,15 @@ class Comparing2ImagWrapper extends React.Component {
   }
 
   handleChange(e) {
-    this.setState({ percentage: e.target.value })
+    const percentage = e.target.value
+    this.setState({ percentage: percentage })
     document.getElementById("left-img").style.width =
-      this.state.percentage * 300 + "px"
+      (percentage * 300).toFixed(2) + "px"
   }
 
   componentDidMount() {
     document.getElementById("left-img").style.width =
-      this.state.percentage * 300 + "px"
+      (this.state.percentage * 300).toFixed(2) + "px"
   }
 
   render() {
@@ -73,11 +74,14 @@ const Comparing2Imag = styled(Comparing2ImagWrapper)`
 
   > div {
     overflow: hidden;
+    border-right: 2px solid #eee;
   }
 
   > img {
     position: absolute;
-    left: 300px;
+    left: 0;
+    top: 0;
+    z-index: -1;
   }
 
   figcaption {
