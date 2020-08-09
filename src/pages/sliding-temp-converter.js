@@ -5,15 +5,14 @@ import Layout from "../components/layout"
 export default function SlidingTempConverterPage() {
   return (
     <Layout titleText="Sliding Temperature Converter">
-      <ul>
-        Todo
-        <li>How to implement marks</li>
-        <li>How to rotate and align the slider nicely?</li>
-      </ul>
       <p>
         Inspired by{" "}
         <a href="https://apps.apple.com/us/app/sliding-temperature-converter/id883954653">
           the iOS app Sliding Temperature Converter
+        </a>
+        . Icons by{" "}
+        <a target="_blank" href="https://icons8.com">
+          Icons8
         </a>
         .
       </p>
@@ -291,7 +290,7 @@ class SlidingTemperatureConverterWrapper extends React.Component {
     }
     this.state = {
       values: { human: "38", weather: "20", oven: "150" },
-      setting: "oven",
+      setting: "human",
     }
   }
 
@@ -310,6 +309,7 @@ class SlidingTemperatureConverterWrapper extends React.Component {
   }
 
   handleSettingChange(newSetting) {
+    if (newSetting === this.state.setting) return
     this.setState({ setting: newSetting })
     document.getElementById(
       "slider-bar"
@@ -318,6 +318,10 @@ class SlidingTemperatureConverterWrapper extends React.Component {
       this.settings[newSetting].celsius.sliderRangeMin,
       this.settings[newSetting].celsius.sliderRangeMax
     )
+    ;["human", "weather", "oven"].map(id =>
+      document.getElementById(id).removeAttribute("selected")
+    )
+    document.getElementById(newSetting).toggleAttribute("selected")
   }
 
   componentDidMount() {
@@ -328,6 +332,7 @@ class SlidingTemperatureConverterWrapper extends React.Component {
       this.settings[this.state.setting].celsius.sliderRangeMin,
       this.settings[this.state.setting].celsius.sliderRangeMax
     )
+    document.getElementById(this.state.setting).toggleAttribute("selected")
   }
 
   render() {
@@ -335,7 +340,6 @@ class SlidingTemperatureConverterWrapper extends React.Component {
     return (
       <div className={this.props.className}>
         <div>
-          {" "}
           <span id="slider-bar"></span>
           <TemperatureSlider
             sliderRangeMin={
@@ -367,22 +371,46 @@ class SlidingTemperatureConverterWrapper extends React.Component {
             value={toFahrenheit(value)}
           />
         </div>
-        <button onClick={() => this.handleSettingChange("human")}>Human</button>
-        <button onClick={() => this.handleSettingChange("weather")}>
-          Weather
-        </button>
-        <button onClick={() => this.handleSettingChange("oven")}>Oven</button>
+        <div>
+          <SettingButton
+            src="/temp-settings/icons8-body-100.png"
+            alt="Human body icon"
+            onClick={() => this.handleSettingChange("human")}
+            id="human"
+            title="Human"
+            bgColor="#FF033E"
+          />
+          <SettingButton
+            src="/temp-settings/icons8-sun-96.png"
+            alt="Sun icon"
+            onClick={() => this.handleSettingChange("weather")}
+            title="Weather"
+            id="weather"
+            bgColor="#FEBE10"
+          />
+          <SettingButton
+            src="/temp-settings/icons8-toaster-oven-100.png"
+            alt="Oven icon"
+            onClick={() => this.handleSettingChange("oven")}
+            title="Oven"
+            id="oven"
+            bgColor="#4169E1"
+          />
+        </div>
       </div>
     )
   }
 }
 
 const SlidingTemperatureConverter = styled(SlidingTemperatureConverterWrapper)`
+  display: inline-block;
+
   > div:first-child {
     padding: 0;
     position: relative;
     display: inline-flex;
     align-items: center;
+    margin: 3em 0 2em;
   }
 
   #slider-bar {
@@ -419,5 +447,42 @@ const SlidingTemperatureConverter = styled(SlidingTemperatureConverterWrapper)`
     top: 20px;
     right: 10%;
     color: #aaa;
+  }
+
+  > div:last-child {
+    display: flex;
+    justify-content: center;
+  }
+`
+
+const SettingButton = styled(props => (
+  <div
+    className={props.className}
+    onClick={props.onClick}
+    title={props.title}
+    id={props.id}
+  >
+    <img src={props.src} alt={props.alt} />
+  </div>
+))`
+   {
+    padding: 8px;
+    cursor: pointer;
+    border: 1px solid #999;
+    border-radius: 12px;
+    margin: 0 8px;
+  }
+
+  &[selected] {
+    background-color: ${props => props.bgColor};
+  }
+
+  &:not([selected]):hover {
+    background-color: ${props => props.bgColor};
+    opacity: 0.8;
+  }
+
+  img {
+    width: 56px;
   }
 `
